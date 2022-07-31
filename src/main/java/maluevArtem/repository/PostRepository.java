@@ -2,9 +2,7 @@ package maluevArtem.repository;
 
 import maluevArtem.exception.NotFoundException;
 import maluevArtem.model.Post;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

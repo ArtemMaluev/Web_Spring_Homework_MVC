@@ -3,7 +3,8 @@ package maluevArtem.model;
 public class Post {
     private long id;
     private String content;
-    private boolean removed;
+
+    private transient boolean removed;
 
     public Post() {
     }
@@ -36,4 +37,5 @@ public class Post {
     public void setRemoved(boolean removed) {
         this.removed = removed;
     }
+
 }

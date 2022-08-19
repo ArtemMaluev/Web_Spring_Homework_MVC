@@ -25,14 +25,18 @@ public class PostRepository {
             return Collections.emptyList();
         } else {
             Collection<Post> values = listPostsMap.values();
-            return values.stream().toList();
+            return values.stream()
+                    .filter(x -> !x.isRemoved())
+                    .toList();
         }
     }
 
     public Optional<Post> getById(long id) {
-        for(Map.Entry<Long, Post> item : listPostsMap.entrySet()) {
+        for (Map.Entry<Long, Post> item : listPostsMap.entrySet()) {
             if (item.getKey().equals(id)) {
-                return  Optional.of(item.getValue());
+                if (!item.getValue().isRemoved()) {
+                    return Optional.of(item.getValue());
+                }
             }
         }
         return Optional.empty();
@@ -40,7 +44,7 @@ public class PostRepository {
 
     public Post save(Post post) {
         if (post.getId() == 0) {
-            for(Map.Entry<Long, Post> item : listPostsMap.entrySet()) {
+            for (Map.Entry<Long, Post> item : listPostsMap.entrySet()) {
                 if ((counter.get() + 1) == item.getKey()) {
                     counter.incrementAndGet();
                 }
@@ -48,6 +52,11 @@ public class PostRepository {
             post.setId(counter.incrementAndGet());
             listPostsMap.put(post.getId(), post);
         } else {
+            if (listPostsMap.get(post.getId()) != null) {
+                if (listPostsMap.get(post.getId()).isRemoved()) {
+                    throw new NotFoundException();
+                }
+            }
             listPostsMap.put(post.getId(), post);
         }
         return post;
@@ -55,7 +64,7 @@ public class PostRepository {
 
     public void removeById(long id) {
         if (listPostsMap.containsKey(id)) {
-            listPostsMap.remove(id);
+            listPostsMap.get(id).setRemoved(true);
             if (counter.get() > id) {
                 counter.set(id - 1);
             }
